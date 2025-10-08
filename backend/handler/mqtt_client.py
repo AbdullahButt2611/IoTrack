@@ -16,7 +16,7 @@ def on_message(client, userdata, msg):
     humidity = data["humidity"]
     ts = timezone.now()
 
-    device, created  = Device.objects.get_or_create(device_id=device_id)
+    device, _  = Device.objects.get_or_create(device_id=device_id, defaults={"last_seen": ts, "status": "ONLINE"})
 
     # Detect ONLINE recovery
     if device.status == "OFFLINE":
