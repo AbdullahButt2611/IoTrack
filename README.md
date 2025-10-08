@@ -4,5 +4,5 @@ The purpose of this document is to define the requirements, design specification
 
 ```cmd
 cd "C:\Program Files\mosquitto"
-mosquitto.exe -c "C:\Program Files\mosquitto\mosquitto.conf"
+mosquitto.exe -v
 ```
