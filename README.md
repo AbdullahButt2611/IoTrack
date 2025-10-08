@@ -5,4 +5,7 @@ The purpose of this document is to define the requirements, design specification
 ```cmd
 cd "C:\Program Files\mosquitto"
 mosquitto.exe -v
+
+
+python manage.py process_tasks --duration=0 --sleep=1
 ```
