@@ -1,0 +1,57 @@
+# ...existing code...
+# Python / Django common ignores
+*.py[cod]
+__pycache__/
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+venv.bak/
+env.bak/
+.Python
+
+# Django specific
+db.sqlite3
+media/
+static/
+staticfiles/
+# local settings / secrets
+local_settings.py
+*.local
+.env
+.env.local
+.env.*.local
+
+# Migrations caches (keep migrations themselves under source control)
+*/migrations/__pycache__/
+*/migrations/*.py[cod]
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*,cover
+
+# Logs and runtime files
+*.log
+celerybeat-schedule
+instance/
+.webassets-cache
+
+# IDEs / OS
+.vscode/
+.idea/
+*.sublime-*
+.DS_Store
+Thumbs.db
