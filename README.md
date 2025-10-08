@@ -14,4 +14,8 @@ mosquitto_pub -h localhost -t devices/device123/telemetry -f payload.json
 
 payload.json:
 {"temperature": 75, "humidity": 60, "deviceId": "device123"}
+
+
+python simulator.py
+python simulator.py --device-id <device_name>
 ```
