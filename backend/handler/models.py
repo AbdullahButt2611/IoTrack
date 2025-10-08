@@ -12,8 +12,14 @@ class Telemetry(models.Model):
     humidity = models.FloatField()
 
 class Alert(models.Model):
+    ALERT_CHOICES = [
+        ('HIGH_TEMP', 'High Temperature'),
+        ('OFFLINE', 'Offline'),
+        ('ONLINE', 'Online'),
+    ]
+
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
-    alert_type = models.CharField(max_length=20)
+    alert_type = models.CharField(max_length=20, choices=ALERT_CHOICES)
     ts = models.DateTimeField(auto_now_add=True)
     payload = models.JSONField(null=True, blank=True)
 
