@@ -8,4 +8,10 @@ mosquitto.exe -v
 
 
 python manage.py process_tasks --duration=0 --sleep=1
+
+
+mosquitto_pub -h localhost -t devices/device123/telemetry -f payload.json
+
+payload.json:
+{"temperature": 75, "humidity": 60, "deviceId": "device123"}
 ```
