@@ -7,6 +7,7 @@ mqtt_client = None
 
 def on_connect(client, userdata, flags, rc):
     client.subscribe("devices/+/telemetry")
+    logger.info("Subscribed to devices/+/telemetry")
 
 def on_message(client, userdata, msg):
     data = json.loads(msg.payload.decode())
@@ -35,14 +36,11 @@ def on_message(client, userdata, msg):
 
 
 def start_mqtt(broker_host='localhost', broker_port=1883, keepalive=60):
-    # avoid starting MQTT client in the autoreloader parent process
     if os.environ.get("RUN_MAIN") != "true":
-        logger.debug("Skipping MQTT start in non-main process.")
         return
 
     global mqtt_client
     if mqtt_client is not None:
-        logger.debug("MQTT client already started.")
         return
 
     mqtt_client = mqtt.Client()
@@ -51,7 +49,7 @@ def start_mqtt(broker_host='localhost', broker_port=1883, keepalive=60):
 
     try:
         mqtt_client.connect(broker_host, broker_port, keepalive)
-        mqtt_client.loop_start()  # non-blocking background thread
-        logger.info("MQTT client started and connected to %s:%s", broker_host, broker_port)
+        mqtt_client.loop_start()
+        logger.info(f"MQTT client connected to {broker_host}:{broker_port}")
     except Exception:
         logger.exception("Failed to start MQTT client")
