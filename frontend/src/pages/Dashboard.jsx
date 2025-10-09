@@ -52,27 +52,30 @@ export default function Dashboard() {
 
   // Fetch telemetry for selected device
   useEffect(() => {
-    const fetchTemperatures = async () => {
-      try {
-        if (selectedDeviceId) {
-          const telemetry = await getTelemetry(selectedDeviceId, 20);
-          setTemperatureData(
-            telemetry
-              .sort((a, b) => new Date(a.ts) - new Date(b.ts))
-              .map((t) => ({
-                ts: t.ts,
-                temperature: t.temperature,
-              }))
-          );
-        } else {
-          setTemperatureData([]);
-        }
-      } catch {
+  let interval;
+  const fetchTemperatures = async () => {
+    try {
+      if (selectedDeviceId) {
+        const telemetry = await getTelemetry(selectedDeviceId, 50);
+        setTemperatureData(
+          telemetry
+            .sort((a, b) => new Date(a.ts) - new Date(b.ts))
+            .map((t) => ({
+              ts: t.ts,
+              temperature: t.temperature,
+            }))
+        );
+      } else {
         setTemperatureData([]);
       }
-    };
-    fetchTemperatures();
-  }, [selectedDeviceId]);
+    } catch {
+      setTemperatureData([]);
+    }
+  };
+  fetchTemperatures();
+  interval = setInterval(fetchTemperatures, 3000);
+  return () => clearInterval(interval);
+}, [selectedDeviceId]);
 
   useEffect(() => {
     if (devices.length > 0 && selectedDeviceId === null) {
