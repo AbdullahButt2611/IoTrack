@@ -90,33 +90,68 @@ export default function Dashboard() {
   ];
 
   const chartData = {
-    labels: temperatureData.map((d) =>
-      new Date(d.ts).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
-    ),
-    datasets: [
-      {
-        label: "Temperature (°C)",
-        data: temperatureData.map((d) => d.temperature),
-        fill: false,
-        borderColor: "#3b82f6",
-        backgroundColor: "#3b82f6",
-        tension: 0.3,
-        pointRadius: 3,
-      },
-    ],
-  };
+  labels: temperatureData.map((d) =>
+    new Date(d.ts).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    })
+  ),
+  datasets: [
+    {
+      label: "Temperature (°C)",
+      data: temperatureData.map((d) => d.temperature),
+      fill: false,
+      borderColor: "#3b82f6",
+      backgroundColor: "#3b82f6",
+      tension: 0.3,
+      pointRadius: 3,
+    },
+  ],
+};
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { display: true, position: "top" },
-      tooltip: { enabled: true },
+const chartOptions = {
+  responsive: true,
+  plugins: {
+    legend: { display: true, position: "top" },
+    tooltip: {
+      enabled: true,
+      callbacks: {
+        label: function(context) {
+          return `Temperature: ${context.parsed.y} °C`;
+        },
+        title: function(context) {
+          return `Time: ${context[0].label}`;
+        }
+      }
     },
-    scales: {
-      x: { title: { display: true, text: "Time" } },
-      y: { title: { display: true, text: "Temperature (°C)" }, beginAtZero: true },
+  },
+  scales: {
+    x: {
+      title: { display: true, text: "Time" },
+      grid: { display: false },
+      ticks: {
+        autoSkip: true,
+        maxTicksLimit: 8,
+        font: { size: 12 },
+      },
     },
-  };
+    y: {
+      title: { display: true, text: "Temperature (°C)" },
+      grid: { display: true },
+      beginAtZero: false,
+      suggestedMin: Math.min(...temperatureData.map(d => d.temperature)) - 2,
+      suggestedMax: Math.max(...temperatureData.map(d => d.temperature)) + 2,
+      ticks: {
+        callback: function(value) {
+          return value + "°";
+        },
+        font: { size: 12 },
+      },
+    },
+  },
+};
 
   return (
     <div className="min-h-screen bg-gray-50 p-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
