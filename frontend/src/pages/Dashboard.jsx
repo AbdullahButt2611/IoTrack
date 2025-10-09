@@ -25,27 +25,30 @@ export default function Dashboard() {
   const [alertCount, setAlertCount] = useState(null);
   const [temperatureData, setTemperatureData] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+  const [alerts, setAlerts] = useState([]);
 
-    // Fetch devices and alerts
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [devicesData, alerts] = await Promise.all([getDevices(), getAlerts()]);
-                setDevices(devicesData);
-                setDeviceCount(devicesData.length);
-                setOnlineDevices(devicesData.filter(d => d.status === 'ONLINE').length);
-                setAlertCount(alerts.length);
-            } catch (err) {
-                setDevices([]);
-                setDeviceCount(0);
-                setOnlineDevices(0);
-                setAlertCount(0);
-            }
-        };
-        fetchData();
-        const interval = setInterval(fetchData, 3000);
-        return () => clearInterval(interval);
-    }, []);
+  // Fetch devices and alerts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [devicesData, alertsData] = await Promise.all([getDevices(), getAlerts()]);
+        setDevices(devicesData);
+        setDeviceCount(devicesData.length);
+        setOnlineDevices(devicesData.filter(d => d.status === 'ONLINE').length);
+        setAlertCount(alertsData.length);
+        setAlerts(alertsData);
+      } catch (err) {
+        setDevices([]);
+        setDeviceCount(0);
+        setOnlineDevices(0);
+        setAlertCount(0);
+        setAlerts([]);
+      }
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fetch telemetry for selected device
   useEffect(() => {
@@ -72,10 +75,10 @@ export default function Dashboard() {
   }, [selectedDeviceId]);
 
   useEffect(() => {
-  if (devices.length > 0 && selectedDeviceId === null) {
-    setSelectedDeviceId(devices[0].device_id);
-  }
-}, [devices, selectedDeviceId]);
+    if (devices.length > 0 && selectedDeviceId === null) {
+      setSelectedDeviceId(devices[0].device_id);
+    }
+  }, [devices, selectedDeviceId]);
 
   const metrics = [
     { label: "Devices", value: deviceCount, icon: Server, color: "bg-zinc-500" },
@@ -195,10 +198,38 @@ export default function Dashboard() {
               )}
             </Card>
           </div>
-          {/* Right: Placeholder (1/3) */}
+          {/* Right: Alerts Table (1/3) */}
           <div>
-            <Card className="p-4 bg-white shadow-sm border-0 h-full flex items-center justify-center">
-              <span className="text-gray-400 text-sm">Right panel content</span>
+            <Card className="p-4 bg-white shadow-sm border-0 h-full">
+              <h2 className="text-sm font-semibold text-gray-700 mb-4">Alerts</h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-xs">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="px-2 py-2 text-left font-semibold text-gray-600">Device</th>
+                      <th className="px-2 py-2 text-left font-semibold text-gray-600">Type</th>
+                      <th className="px-2 py-2 text-left font-semibold text-gray-600">Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {alerts.length === 0 ? (
+                      <tr>
+                        <td colSpan={3} className="px-2 py-2 text-gray-400 text-center">
+                          No alerts found.
+                        </td>
+                      </tr>
+                    ) : (
+                      alerts.map((alert, idx) => (
+                        <tr key={idx} className="border-b last:border-b-0 hover:bg-gray-50">
+                          <td className="px-2 py-2 font-medium text-gray-800">{alert.device_id}</td>
+                          <td className="px-2 py-2 text-gray-700">{alert.alert_type}</td>
+                          <td className="px-2 py-2 text-gray-500">{formatDateTime(alert.ts)}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </Card>
           </div>
         </div>
